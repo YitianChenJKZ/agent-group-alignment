@@ -1,0 +1,196 @@
+\section{Appendix: analytic proofs}
+
+Throughout, a fast agent takes a turn every $\dTf$ and a slow agent every $\dTs$, so the activation rates are $r_f = 1/\dTf$ and $r_s = 1/\dTs = r_f/\rho$. On each turn an agent offers its current label to every neighbour, and a neighbour of type $b$ accepts an offer from a propagator of type $a$ with probability $\Pab{a}{b}$, independently of everything else. The population is balanced, $N_f = N_s = N/2$, and agents are placed at random, so on average half of any agent's neighbours are fast.
+
+\subsection*{A.1 \quad Hypothesis 1: fast agents mainly interact with each other}
+
+Since agents are fixed on the grid, ``interact'' is operationalised as a \emph{successful adoption event}: one agent offers its label and a neighbour accepts it. Figure~\ref{fig:h1} shows the local picture. The centre agent offers to every neighbour $\rho$ times per slow time step regardless of type; fast neighbours reply $\rho$ times, slow neighbours once. \\
+
+\begin{figure}[ht]
+    \centering
+    \tikzset{
+        cell/.style={draw=gray!70, minimum size=1.1cm, inner sep=0pt, font=\small},
+        fast/.style={cell, fill=blue!25},
+        slow/.style={cell, fill=orange!35},
+        centre/.style={cell, fill=blue!70, text=white, font=\small\bfseries},
+        offer/.style={-{Latex[length=2mm]}, thick},
+        cnt/.style={font=\scriptsize, fill=white, inner sep=1pt}
+    }
+    %
+    \begin{subfigure}[b]{0.36\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node[slow]   (nw) at (-1.1, 1.1) {S};
+            \node[fast]   (n)  at ( 0,   1.1) {F};
+            \node[slow]   (ne) at ( 1.1, 1.1) {S};
+            \node[fast]   (w)  at (-1.1, 0)   {F};
+            \node[centre] (c)  at ( 0,   0)   {F};
+            \node[fast]   (e)  at ( 1.1, 0)   {F};
+            \node[slow]   (sw) at (-1.1,-1.1) {S};
+            \node[fast]   (s)  at ( 0,  -1.1) {F};
+            \node[slow]   (se) at ( 1.1,-1.1) {S};
+        \end{tikzpicture}
+        \caption{Initial configuration: a fast agent (dark) with 4 fast (blue) and 4 slow (orange) neighbours.}
+        \label{fig:h1a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.58\textwidth}
+        \centering
+        \begin{tikzpicture}[x=2.5cm, y=2.5cm]
+            \tikzset{cell/.append style={minimum size=0.9cm}}
+            \node[slow]   (nw) at (-1, 1) {S};
+            \node[fast]   (n)  at ( 0, 1) {F};
+            \node[slow]   (ne) at ( 1, 1) {S};
+            \node[fast]   (w)  at (-1, 0) {F};
+            \node[centre] (c)  at ( 0, 0) {F};
+            \node[fast]   (e)  at ( 1, 0) {F};
+            \node[slow]   (sw) at (-1,-1) {S};
+            \node[fast]   (s)  at ( 0,-1) {F};
+            \node[slow]   (se) at ( 1,-1) {S};
+            % fast <-> fast: rho offers each way (thick)
+            \draw[offer, {Latex[length=2mm]}-{Latex[length=2mm]}, line width=1.4pt, blue!60!black] (c) -- (n) node[cnt, pos=0.32, right=2pt] {$\rho\,/\,\rho$};
+            \draw[offer, {Latex[length=2mm]}-{Latex[length=2mm]}, line width=1.4pt, blue!60!black] (c) -- (s) node[cnt, pos=0.32, right=2pt] {$\rho\,/\,\rho$};
+            \draw[offer, {Latex[length=2mm]}-{Latex[length=2mm]}, line width=1.4pt, blue!60!black] (c) -- (e) node[cnt, midway, above=2pt] {$\rho\,/\,\rho$};
+            \draw[offer, {Latex[length=2mm]}-{Latex[length=2mm]}, line width=1.4pt, blue!60!black] (c) -- (w) node[cnt, midway, above=2pt] {$\rho\,/\,\rho$};
+            % fast <-> slow: rho offers out, 1 back (thin)
+            \draw[offer, {Latex[length=1.6mm]}-{Latex[length=1.6mm]}, line width=0.6pt, orange!70!black] (c) -- (nw) node[cnt, pos=0.68, above right=1pt] {$\rho\,/\,1$};
+            \draw[offer, {Latex[length=1.6mm]}-{Latex[length=1.6mm]}, line width=0.6pt, orange!70!black] (c) -- (ne) node[cnt, pos=0.68, above left=1pt]  {$\rho\,/\,1$};
+            \draw[offer, {Latex[length=1.6mm]}-{Latex[length=1.6mm]}, line width=0.6pt, orange!70!black] (c) -- (sw) node[cnt, pos=0.68, below right=1pt] {$\rho\,/\,1$};
+            \draw[offer, {Latex[length=1.6mm]}-{Latex[length=1.6mm]}, line width=0.6pt, orange!70!black] (c) -- (se) node[cnt, pos=0.68, below left=1pt]  {$\rho\,/\,1$};
+        \end{tikzpicture}
+        \caption{Offers exchanged in one slow time step $\dTs$, written as (centre $\to$ neighbour)\,/\,(neighbour $\to$ centre). Each offer is accepted with probability $p$.}
+        \label{fig:h1b}
+    \end{subfigure}
+    \caption{Local view of Hypothesis 1. A fast--fast pair exchanges $2\rho$ offers per slow time step while a fast--slow pair exchanges only $\rho+1$. For $\rho = 3$ that is $6$ against $4$; as $\rho$ grows the ratio $2\rho/(\rho+1) \to 2$.}
+    \label{fig:h1}
+\end{figure}
+
+\paragraph{Counting argument.} Count adoption events over one slow time step $\dTs$, with all acceptance probabilities equal to $p$. In that window every slow agent takes exactly one turn and every fast agent takes $\rho$ turns. On each turn an agent offers to its $8$ neighbours, on average $4$ fast and $4$ slow, and each offer is accepted with probability $p$. Multiplying
+\[
+(\text{number of agents}) \times (\text{turns each}) \times (\text{neighbours of the receiving type}) \times (\text{acceptance probability})
+\]
+gives the expected number of adoption events of each kind:
+\begin{align}
+\text{fast} \to \text{fast}: &\quad \tfrac{N}{2} \times \rho \times 4 \times p \;=\; 2\rho N p, \notag\\
+\text{fast} \to \text{slow}: &\quad \tfrac{N}{2} \times \rho \times 4 \times p \;=\; 2\rho N p, \notag\\
+\text{slow} \to \text{fast}: &\quad \tfrac{N}{2} \times 1 \times 4 \times p \;=\; 2 N p, \notag\\
+\text{slow} \to \text{slow}: &\quad \tfrac{N}{2} \times 1 \times 4 \times p \;=\; 2 N p.
+\label{eq:counts}
+\end{align}
+The total is $4Np(\rho+1)$.
+
+\paragraph{Who a fast agent hears from.} Condition on the adopter being fast. Of the $2\rho Np + 2Np$ adoptions made by fast agents, $2\rho Np$ came from fast propagators, so
+\begin{equation}
+\Pr[\text{propagator fast} \mid \text{adopter fast}] \;=\; \frac{2\rho N p}{2\rho N p + 2 N p} \;=\; \frac{\rho}{\rho+1}.
+\label{eq:h1_main}
+\end{equation}
+$N$ and $p$ cancel, so the result depends only on the speed ratio. At $\rho = 1$ it equals $\tfrac12$, which is what random mixing predicts; at $\rho = 3$, $10$, $100$ it is $0.75$, $0.91$, $0.99$. This is the quantity plotted in Figure~\ref{fig:fig2}.
+
+\paragraph{Supporting shares.} From \eqref{eq:counts}, the share of all adoption events that are fast$\to$fast is $\rho/2(\rho+1)$, the share initiated by a fast agent is $\rho/(\rho+1)$, and the share \emph{received} by a fast agent is $(2\rho Np + 2Np)/4Np(\rho+1) = \tfrac12$ for every $\rho$. Fast agents therefore do not receive more than their share of interactions; they send more than their share, and \eqref{eq:h1_main} follows because most of what anyone receives was sent by a fast agent. The same conditioning for a slow adopter also gives $\rho/(\rho+1)$: slow agents mainly hear from fast agents too.
+
+\begin{remark}
+Boundary agents on the $n \times n$ grid have fewer than $8$ neighbours, but this scales all four counts in \eqref{eq:counts} by the same factor and leaves every ratio unchanged. For an unbalanced population with a fraction $f$ of fast agents, replacing $\tfrac{N}{2}$ by $fN$ or $(1-f)N$ and the $4$ fast (slow) neighbours by $8f$ ($8(1-f)$) gives $\Pr[\text{propagator fast} \mid \text{adopter fast}] = f\rho/(f\rho + 1 - f)$, which reduces to \eqref{eq:h1_main} at $f = \tfrac12$.
+\end{remark}
+
+\subsection*{A.2 \quad Hypothesis 2: fast-origin information drowns out slow-origin information}
+
+Let $x_i(t) \in \{F, S\}$ be the label held by agent $i$ at time $t$, with $x_i(0) = F$ for fast agents and $S$ for slow agents. Let $u_f(t)$ and $u_s(t)$ be the fraction of fast and slow agents holding label $F$, so $u_f(0) = 1$ and $u_s(0) = 0$. The general acceptance probabilities $\Pab{a}{b}$ are kept throughout this section, and the uniform case $\Pab{a}{b} = p$ is specialised at the end; this makes the same calculation serve Hypothesis 3.
+
+\paragraph{Mean-field dynamics.} Write $\bar k$ for the average number of neighbours ($\bar k \to 8$ as $n$ grows). An agent of type $b$ receives offers carrying label $F$ at rate $\bar k\bigl[\tfrac12 r_f \Pab{f}{b}\, u_f + \tfrac12 r_s \Pab{s}{b}\, u_s\bigr]$, and offers carrying label $S$ at the same rate with $u$ replaced by $1-u$. Balancing the rate at which type-$b$ agents switch to $F$ against the rate at which they switch to $S$,
+\begin{equation}
+\frac{du_b}{dt} \;=\; \bar k \sum_{a \in \{f,s\}} w_{ab}\,(u_a - u_b), \qquad w_{ab} \;\equiv\; \tfrac12\, r_a\, \Pab{a}{b}.
+\label{eq:consensus}
+\end{equation}
+This is a linear consensus system; $w_{ab}$ is the influence of type $a$ on type $b$. The within-type terms vanish because $u_a - u_a = 0$, leaving
+\begin{equation}
+\frac{du_f}{dt} \;=\; \bar k\, w_{sf}\,(u_s - u_f), \qquad
+\frac{du_s}{dt} \;=\; \bar k\, w_{fs}\,(u_f - u_s).
+\label{eq:two_type}
+\end{equation}
+Subtracting, $d(u_f - u_s)/dt = -\bar k\,(w_{fs} + w_{sf})\,(u_f - u_s)$, so the two types converge to a common value on a timescale
+\begin{equation}
+\tau \;=\; \frac{1}{\bar k\,(w_{fs} + w_{sf})} \;=\; \frac{2\,\dTf}{\bar k\,(\Pab{f}{s} + \Pab{s}{f}/\rho)} \;\xrightarrow{\;\rho \to \infty\;}\; \frac{2\,\dTf}{\bar k\,\Pab{f}{s}},
+\label{eq:tau}
+\end{equation}
+which is set by the fast agents' clock alone: this is the ``rapidly'' in the hypothesis. Adding $w_{fs}$ times the first equation of \eqref{eq:two_type} to $w_{sf}$ times the second shows that $w_{fs}\,u_f + w_{sf}\,u_s$ is constant in time. Evaluating it at $t = 0$ and at the common limit $u^\ast$,
+\begin{equation}
+u^\ast \;=\; \frac{w_{fs}}{w_{fs} + w_{sf}} \;=\; \frac{r_f\, \Pab{f}{s}}{r_f\, \Pab{f}{s} + r_s\, \Pab{s}{f}}
+\;=\; \frac{\rho\, \Pab{f}{s}}{\rho\, \Pab{f}{s} + \Pab{s}{f}}.
+\label{eq:ustar}
+\end{equation}
+
+\paragraph{Exact fixation probability.} The mean-field value \eqref{eq:ustar} is in fact exact for the probability that label $F$ eventually takes over, on any finite graph.
+
+\begin{proposition}[Fixation probability]
+\label{prop:fixation}
+Let $c_f = r_f\, \Pab{f}{s}$ and $c_s = r_s\, \Pab{s}{f}$, and define
+\[
+M(t) \;=\; c_f \sum_{i \text{ fast}} \mathbf{1}[x_i(t) = F] \;+\; c_s \sum_{i \text{ slow}} \mathbf{1}[x_i(t) = F].
+\]
+Then $M(t)$ is a martingale on any finite graph, including the bounded $n \times n$ grid. Consequently
+\begin{equation}
+\Pr[F \text{ fixates}] \;=\; \frac{M(0)}{M_{\max}} \;=\; \frac{N_f\, c_f}{N_f\, c_f + N_s\, c_s}, \qquad
+\Pr[S \text{ fixates}] \;=\; \frac{N_s\, c_s}{N_f\, c_f + N_s\, c_s},
+\label{eq:fixation}
+\end{equation}
+and for the balanced population $\Pr[F \text{ fixates}] = u^\ast$.
+\end{proposition}
+
+\begin{proof}
+Consider one edge $\{i, j\}$ and the expected rate of change of $M$ due to transmissions along it. If both endpoints have the same type $a$, then $i \to j$ and $j \to i$ transmissions each occur at rate $r_a \Pab{a}{a}$ and change $M$ by $c_a(\mathbf{1}[x_i = F] - \mathbf{1}[x_j = F])$ and $c_a(\mathbf{1}[x_j = F] - \mathbf{1}[x_i = F])$ respectively, which cancel. If $i$ is fast and $j$ is slow, the transmission $i \to j$ occurs at rate $r_f \Pab{f}{s}$ and changes $M$ by $c_s(\mathbf{1}[x_i = F] - \mathbf{1}[x_j = F])$, while $j \to i$ occurs at rate $r_s \Pab{s}{f}$ and changes $M$ by $c_f(\mathbf{1}[x_j = F] - \mathbf{1}[x_i = F])$. The expected drift along the edge is therefore proportional to $r_f \Pab{f}{s}\, c_s - r_s \Pab{s}{f}\, c_f$, which is zero by the choice of $c_f$ and $c_s$. Summing over edges, $\mathbb{E}[dM/dt] = 0$, so $M$ is a martingale. The argument never uses the number of neighbours of any agent, so it holds on any graph. The process is absorbed at $M = 0$ (all $S$) or $M = M_{\max} = N_f c_f + N_s c_s$ (all $F$); the optional stopping theorem then gives $\Pr[F \text{ fixates}] = M(0)/M_{\max}$ with $M(0) = N_f c_f$.
+\end{proof}
+
+\paragraph{The $\Cidx$-index.} At fixation one label holds the whole population, so $\Cidx$ is the ratio of fixation probabilities normalised by the population mix. By \eqref{eq:fixation},
+\begin{equation}
+\Cidx \;=\; \frac{\Pr[S \text{ fixates}] / \Pr[F \text{ fixates}]}{N_s / N_f}
+\;=\; \frac{c_s}{c_f}
+\;=\; \frac{r_s\, \Pab{s}{f}}{r_f\, \Pab{f}{s}}
+\;=\; \frac{\Pab{s}{f}}{\rho\, \Pab{f}{s}}.
+\label{eq:C_general}
+\end{equation}
+Under the uniform probabilities of Hypotheses 1 and 2 this gives
+\begin{equation}
+\Cidx \;=\; \frac{1}{\rho},
+\label{eq:C_uniform}
+\end{equation}
+independently of $N$, of the population mix, of the grid, and of the within-type probabilities $\Pab{f}{f}$ and $\Pab{s}{s}$. For the balanced population the fast-origin label ends up held by a fraction $u^\ast = \rho/(\rho+1)$ of agents: $75\%$ at $\rho = 3$, $91\%$ at $\rho = 10$, $99\%$ at $\rho = 100$. Every doubling of the speed ratio halves the representation of slow-origin information.
+
+\begin{remark}
+Spatial correlations on the grid (domains of like-labelled agents) affect the \emph{time} to fixation, which is known to be slow for two-dimensional voter dynamics, but not the fixation \emph{probability}, which is fixed by Proposition~\ref{prop:fixation}. Simulations should therefore estimate $\Cidx$ either from fixation counts over many seeds or from label fractions at a horizon $T \gg \tau$; both converge to \eqref{eq:C_general}.
+\end{remark}
+
+\subsection*{A.3 \quad Hypothesis 3: consultation restores balance}
+
+Nothing new is needed: \eqref{eq:C_general} already contains the intervention. The outcome depends on the two cross-type probabilities only through their ratio, scaled by the speed ratio.
+
+\paragraph{One lever.} Hold $\Pab{f}{s} = p$ fixed and raise $\Pab{s}{f}$, the probability that a fast agent accepts what a slow neighbour offers. Then
+\begin{equation}
+\Cidx(\Pab{s}{f}) \;=\; \frac{\Pab{s}{f}}{\rho\, p},
+\label{eq:C_intervention}
+\end{equation}
+which is linear in the intervention. Balance, $\Cidx = 1$, is reached exactly when the effective cross-type transmission rates are equal:
+\begin{equation}
+r_s\, \Pab{s}{f} \;=\; r_f\, \Pab{f}{s}
+\quad\Longleftrightarrow\quad
+\Pab{s}{f}^{\ast} \;=\; \rho\, \Pab{f}{s}.
+\label{eq:balance}
+\end{equation}
+For $p = 0.1$ this requires $\Pab{s}{f}^\ast = 0.1$, $0.3$, $1.0$ at $\rho = 1$, $3$, $10$. The intervention works indirectly: agents cannot see where information originated, only who is offering it, and raising $\Pab{s}{f}$ helps slow-origin information because slow agents are the ones most likely to be carrying it.
+
+\paragraph{Where one lever fails.} Since $\Pab{s}{f}$ is a probability, \eqref{eq:balance} can be satisfied only if $\rho\, \Pab{f}{s} \leq 1$, that is,
+\begin{equation}
+\rho \;\leq\; \frac{1}{\Pab{f}{s}}.
+\label{eq:limit}
+\end{equation}
+At $\rho = 100$ with $\Pab{f}{s} = 0.1$ the required value is $\Pab{s}{f}^\ast = 10$: even a fast agent that accepts everything a slow neighbour says is not enough. Setting $\Pab{s}{f} = 1$ gives $\Cidx = 1/(\rho\, \Pab{f}{s}) = 0.1$.
+
+\paragraph{Two levers.} Beyond \eqref{eq:limit} the second cross-type probability must move as well. Rearranging \eqref{eq:C_general}, balance at any $\rho$ requires
+\begin{equation}
+\frac{\Pab{s}{f}}{\Pab{f}{s}} \;=\; \rho,
+\label{eq:two_levers}
+\end{equation}
+so at $\rho = 100$ the pair $(\Pab{s}{f}, \Pab{f}{s}) = (1, 0.01)$ restores balance. In words: fast agents must become maximally receptive to slow agents \emph{and} slow agents must become far less receptive to fast agents. The within-type probabilities $\Pab{f}{f}$ and $\Pab{s}{s}$ do not appear in \eqref{eq:C_general} at all; by \eqref{eq:tau} they affect only how quickly the balance is reached, not where it lands.
+
+\begin{remark}
+Equation \eqref{eq:two_levers} says the whole problem is one-dimensional: the speed ratio $\rho$ and the receptivity ratio $\Pab{s}{f}/\Pab{f}{s}$ enter only through their quotient. A group-alignment intervention therefore succeeds exactly when it makes the collective weigh slow-origin channels more heavily by the same factor that the slow agents are slower. This is the analytic content of Figures~\ref{fig:fig4} and~\ref{fig:rho}.
+\end{remark}
