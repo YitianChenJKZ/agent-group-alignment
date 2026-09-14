@@ -1,9 +1,7 @@
 # Installers and other large binaries — never commit these
+*.sh
 *.pkg
 *.dmg
-
-# macOS
-.DS_Store
 
 # Jupyter
 .ipynb_checkpoints/
@@ -17,14 +15,4 @@ venv/
 
 # Simulation output
 results/
-
-# LaTeX build artefacts
-*.aux
-*.log
-*.out
-*.bbl
-*.blg
-*.synctex.gz
-*.fdb_latexmk
-*.fls
-*.toc
+figures/
