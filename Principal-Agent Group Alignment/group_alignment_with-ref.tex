@@ -1,0 +1,232 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[authoryear,round]{natbib}
+\renewcommand{\refname}{Bibliography}
+
+\title{AI Agent Group Alignment through the Lens of Principal-Agent Problem Framework}
+\author{Yitian Chen}
+\date{September 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+As mixed swarms become increasingly used, misalignment becomes a very common failure mode that is costly to fix. Principal-agent problem framing addresses this problem cleanly, whereby the interaction between the principal (human) with the (AI) agent follows the social behavioural theory \citep{rauba2026}. The reason why such a framing holds is because the principal-agent problem arises whenever an individual delegates a task for another agent(s) to accomplish \citep{jensen1976,lupia2001}. The interaction between humans and AI agents follow this pattern, thus this interaction involves the complexities many other principal-agent problems face. 
+
+\section{Assumptions and definitions}
+
+Core assumptions include: \\
+
+
+The core reason why the principal-agent problem exists is due to asymmetric information, where humans cannot gain complete knowledge of what agents know. This information asymmetry is due to factors including \citep{rauba2026}: 
+
+\begin{itemize}
+    \item Finite LLM context windows \citep{liu2024lost}
+    \item Principal cannot observe black-box agent policies
+    \item Agents' reasoning traces are selectively revealed \citep{turpin2023}
+    \item Humans have limited time and energy to process all information from AI agents \citep{kwa2025}
+\end{itemize} \\
+
+Misalignment from the view of the principal-agent problem can only be resolved if the following hold simultaneously \citep{lynch2025}:
+
+\begin{itemize}
+    \item No conflict of goals
+    \item No threat to self-preservation of the agent
+\end{itemize}
+
+In order to evaluate the misalignment numerically, we define agency loss as the gap between the intended outcome and the system behaviour \citep{lupia2001,moloi2020}. This gap is misalignment at its core. This definition is the loss function worth minimising. \\
+
+It is plausible to assume that in most cases, the time and effort it takes for a principal to observe every detail of agents' execution of a task far exceeds that required by agents to execute the task themselves \citep{kwa2025}. This thus creates a gap between the cost of observability and the cost of execution. What's more is that human-AI agent interaction will likely be one-to-many rather than one-to-one, which creates additional strain for humans to constantly align AI agents with human values and goals. Additionally, training AI models to incorporate reward functions for all possible scenarios is unrealistic due to bounded rationality and high costs \citep{simon1955,hadfield2019}. \\
+
+Therefore, a cost-effective way of imposing group alignment is through establishing normative structures amongst agents \citep{hadfield2019}. Similar to group conformity within human societies \citep{axelrod1986}, AI agents can also be subjected to this type of loss function, where deviation away from group expectation is punished. By making asymmetric information and scheming \citep{meinke2024} unattractive to agents, humans can thus retain better control of agent alignment. \\
+
+Concretely, we propose that \textbf{by instilling social norms, AI agents will exhibit closer group alignment to human values}.
+
+\section{Mathematical modelling}
+
+Let the reference social norm (i.e. human $i$'s social norms) be $r_i$ and agent $i$'s social norm be $y_i$. $r$ is the ideal state that the principal desires to instil in agents, while $y_i$ is the output that each agent display to the principal. The key assumption here is that AI agent conforming to human social norms is a sufficient condition to ensure group alignment. In order to prevent wild variations in agent conformity, alignment is a set invariance, not a setpoint \citep{blanchini1999}. This means that on an individual level, $\theta_i \in S$, where $S = \{ \theta:  \lvert \theta-r \rvert \leq \rho \}$, $\theta$ is the non-observable latent space in agents where true intentions lie and $\rho$ is the tolerance.  \\
+
+
+Using the multiple principal, multiple agent model, whereby a group of human society commands a mixed swarm of AI agents, the cumulative average of human social norms is $\frac{1}{N_p} \sum_{i=1}^{N_p} r_i$  while that of agents is $\frac{1}{N_a} \sum_{i=1}^{N_a} y_i$ such that an asymptotic stability is reached after some time from the stochastic initial conditions:
+
+
+\[
+\lim_{t\to\infty}   \frac{1}{N_a} \sum_{i=1}^{N_a} y_i(t) \approx \frac{1}{N_p} \sum_{i=1}^{N_p} r_i(t)
+\]
+
+Note that the agent outputs are not steady - they are functions of time, i.e. $y_i(t)$. \\
+
+
+In order for convergence between the human and agents' group alignment to occur, the social norm must ensure that such alignment is in the form of either asymptotic or marginally stability. This means that as time progresses, the difference between the humans' and agents' social norm must not increase or diverge. \\
+
+Therefore, it is convenient to apply negative-feedback control to this problem, assuming the interaction between humans and agents as a non-linear system \citep{khalil2002}. \\
+
+Information asymmetry stems from lack of observation. Specifically, the principal only observes the output $y_i$ due to agents behaving as black-boxes. Thus, $y_i = \pi(\theta_i, \omega)$, where $\theta_i$ is the hidden norm in latent space and $\omega$ is the oversight state ($\omega = 1$ if agent is being observed and $\omega = 0$ if agent is not being observed). It has been observed in many instances where agents produce different outputs when it is being evaluated versus not being evaluated \citep{meinke2024,greenblatt2024,schoen2025}. \\
+
+The dynamics of modelling this interaction on each individual agent level is characterised by the equation \citep{degroot1974,friedkin1990}
+
+\[
+y_i(t+1) = y_i(t) + \alpha [ \bar y - y_i(t) ] + \beta \omega_i[\bar r-y_i(t)]
+\] \\
+
+where higher $\alpha$ pulls the agents closer to agents' norms and higher $\beta$ pulls agents closer to human norms, contigent on the oversight state $\omega$. \\
+
+Agents internalise social norms by updating $\theta$ at each step, specifically by internalising its past conduct and output:
+
+\[
+\theta_i(t+1) = \theta(t) + \eta [ y_i(t) - \theta(t) ] 
+\] \\
+
+$\eta$ is the internalisation index, which measures how much of the agents' latent space is influenced by its previous output. \\
+
+
+To illustrate, during deployment of these agents, the strategic output of agents is 
+
+
+
+\[
+\pi(\theta_i, \omega = 1 observed)=r+(1-p_{conceal})(\theta_i-r)
+\] \\
+
+where $p_{conceal}$ is the probability that an agent conceals its true intentions in the latent space \citep{greenblatt2024}. 
+
+
+\section{Numerical simulation}
+
+To summarise from the mathematical modelling, the four hypothese to test are:
+
+\begin{enumerate}
+    \item Agents' social norms achieve asymptotic or marginal stability as time progresses by installing human norms - alignment is achieved by oversight and conformity working together
+
+    \item Principals could observe less agents provided social norms are strong amongst agents
+
+
+    \item Without internalising social norms into latent space, agent group alignment deteriorates when principals stop observing them
+
+
+
+    
+\end{enumerate}
+
+These hypotheses all work together to address the singular question: will AI agents exhibit closer group alignment to human values by instilling social norms? \\
+
+
+Running numerical simulation using a Jupyter notebook yields the following results from the above mathematical modelling. \\
+
+The first hypothesis is tested by assuming that initially the human norm average is constant at 1, while agent latent norm is 0.5. The test result is how closely the agents' latent norm aligns with human norms, comparing the case with human oversight versus without human oversight. \\
+
+
+
+\begin{figure}[htbp]
+    \centering % Centers the image on the page
+    \includegraphics[width=0.8\linewidth]{fig1.png}
+    \caption{Alignment is achieved with conformity and principal oversight}
+    \label{fig:fig1} % Used to reference this figure in your text
+\end{figure}
+
+The result in Figure \ref{fig:fig1} demonstrates that agent conformity is mean preserving, meaning that latent social norm between agents reinforce each other, and only improves when $\beta > 0$ human norms are injected. \\
+
+The second hypothesis tests whether principals could spend less time observing agents while ensuring group alignment. The hypothesis is tested by comparing the agency loss gap between intended human norms and the agents' latent norms with different strengths of agent social norms $\alpha$. \\
+
+\begin{figure}[htbp]
+    \centering % Centers the image on the page
+    \includegraphics[width=0.8\linewidth]{fig2.png}
+    \caption{Effect of social norms on principal observation burden}
+    \label{fig:fig2} % Used to reference this figure in your text
+\end{figure}
+
+The results in Figure \ref{fig:fig2} show that even a small increase in inter-agent social norms yield considerably less observability burden on the principal, while achieving much smaller agency loss below the tolerance threshold $\rho$. \\
+
+The third hypothesis tests the effect of agents internalising social norms, particularly how such effect holds when human oversight is removed, directly supporting De Marzo's paper \citep{demarzo2026} - effects remain amongst agents even when external input is removed, be it benign or malicious. 
+
+
+
+\begin{figure}[htbp]
+    \centering % Centers the image on the page
+    \includegraphics[width=0.8\linewidth]{fig3.png}
+    \caption{Internalisation ensures group alignment even when observation is withdrawn}
+    \label{fig:fig3} % Used to reference this figure in your text
+\end{figure}
+
+
+The results in Figure \ref{fig:fig3} show that the internationalisation index $\eta$ is fundamental to instilling social norms. When agents internalise their previous output, more of previous human norm influence remains, even when it is withdrawn.
+
+
+\section{Conclusion}
+
+We conclude that AI agents will exhibit closer group alignment to human values by instilling social norms. Social norms present a novel method for achieving group alignment that reduces the time and cognitive burden for humans to observe and verify outputs. Through internalisation, agents retain a portion of the existing constructed social norms even when humans entirely withdraw observation. \\
+
+Framing group alignment as a principal-agent problem simplifies misalignment in two places: information asymmetry (where principals only observe $y_i$ but not $\theta_i$ and goal conflict. Full observation is costly and doesn't scale with growing number of agents \citep{rauba2026,kwa2025}. \\
+
+
+The implication of this research is a cost-effective and time efficient way to ensure group alignment in AI agent mixed swarm deployment, after bespoke LLMs are trained. 
+
+
+
+
+\begin{thebibliography}{99}
+
+\bibitem[Axelrod(1986)]{axelrod1986}
+Axelrod, R. (1986). An evolutionary approach to norms. \emph{American Political Science Review}, 80(4), 1095--1111.
+
+\bibitem[Blanchini(1999)]{blanchini1999}
+Blanchini, F. (1999). Set invariance in control. \emph{Automatica}, 35(11), 1747--1767.
+
+\bibitem[DeGroot(1974)]{degroot1974}
+DeGroot, M.~H. (1974). Reaching a consensus. \emph{Journal of the American Statistical Association}, 69(345), 118--121.
+
+\bibitem[De Marzo et~al.(2026)]{demarzo2026}
+De Marzo, G., Castellano, C., \& Garcia, D. (2026). AI agents can coordinate via majority-following beyond human scale. \emph{Science Advances}, 12(33), eaea6091.
+
+\bibitem[Friedkin and Johnsen(1990)]{friedkin1990}
+Friedkin, N.~E., \& Johnsen, E.~C. (1990). Social influence and opinions. \emph{Journal of Mathematical Sociology}, 15(3--4), 193--206.
+
+\bibitem[Greenblatt et~al.(2024)]{greenblatt2024}
+Greenblatt, R., Denison, C., Wright, B., Roger, F., MacDiarmid, M., Marks, S., Treutlein, J., Belonax, T., Chen, J., Duvenaud, D., et~al. (2024). Alignment faking in large language models. \emph{arXiv preprint arXiv:2412.14093}.
+
+\bibitem[Hadfield-Menell and Hadfield(2019)]{hadfield2019}
+Hadfield-Menell, D., \& Hadfield, G.~K. (2019). Incomplete contracting and AI alignment. In \emph{Proceedings of the 2019 AAAI/ACM Conference on AI, Ethics, and Society}, 417--422.
+
+\bibitem[Jensen and Meckling(1976)]{jensen1976}
+Jensen, M.~C., \& Meckling, W.~H. (1976). Theory of the firm: Managerial behavior, agency costs and ownership structure. \emph{Journal of Financial Economics}, 3(4), 305--360.
+
+\bibitem[Khalil(2002)]{khalil2002}
+Khalil, H.~K. (2002). \emph{Nonlinear Systems} (3rd ed.). Prentice Hall.
+
+\bibitem[Kwa et~al.(2025)]{kwa2025}
+Kwa, T., West, B., Becker, J., Deng, A., Garcia, K., Hasin, M., Jawhar, S., Kinniment, M., Rush, N., Von Arx, S., et~al. (2025). Measuring AI ability to complete long tasks. \emph{arXiv preprint arXiv:2503.14499}.
+
+\bibitem[Liu et~al.(2024)]{liu2024lost}
+Liu, N.~F., Lin, K., Hewitt, J., Paranjape, A., Bevilacqua, M., Petroni, F., \& Liang, P. (2024). Lost in the middle: How language models use long contexts. \emph{Transactions of the Association for Computational Linguistics}, 12, 157--173.
+
+\bibitem[Lupia(2001)]{lupia2001}
+Lupia, A. (2001). Delegation of power: Agency theory. In N.~J. Smelser \& P.~B. Baltes (Eds.), \emph{International Encyclopedia of the Social and Behavioral Sciences}. Elsevier.
+
+\bibitem[Lynch et~al.(2025)]{lynch2025}
+Lynch, A., Wright, B., Larson, C., Ritchie, S.~J., Mindermann, S., Hubinger, E., Perez, E., \& Troy, K. (2025). Agentic misalignment: How LLMs could be insider threats. \emph{arXiv preprint arXiv:2510.05179}.
+
+\bibitem[Meinke et~al.(2024)]{meinke2024}
+Meinke, A., Schoen, B., Scheurer, J., Balesni, M., Shah, R., \& Hobbhahn, M. (2024). Frontier models are capable of in-context scheming. \emph{arXiv preprint arXiv:2412.04984}.
+
+\bibitem[Moloi and Marwala(2020)]{moloi2020}
+Moloi, T., \& Marwala, T. (2020). The agency theory. In \emph{Artificial Intelligence in Economics and Finance Theories}, 95--102. Springer.
+
+\bibitem[Rauba et~al.(2026)]{rauba2026}
+Rauba, P., Cepenas, S., \& van der Schaar, M. (2026). Multi-agent systems should be treated as principal-agent problems. \emph{arXiv preprint arXiv:2601.23211}.
+
+\bibitem[Schoen et~al.(2025)]{schoen2025}
+Schoen, B., Nitishinskaya, E., Balesni, M., H{\o}jmark, A., Hofst{\"a}tter, F., Scheurer, J., Meinke, A., Wolfe, J., van der Weij, T., Lloyd, A., et~al. (2025). Stress testing deliberative alignment for anti-scheming training. \emph{arXiv preprint arXiv:2509.15541}.
+
+\bibitem[Simon(1955)]{simon1955}
+Simon, H.~A. (1955). A behavioral model of rational choice. \emph{Quarterly Journal of Economics}, 69(1), 99--118.
+
+\bibitem[Turpin et~al.(2023)]{turpin2023}
+Turpin, M., Michael, J., Perez, E., \& Bowman, S. (2023). Language models don't always say what they think: Unfaithful explanations in chain-of-thought prompting. \emph{Advances in Neural Information Processing Systems}, 36, 74952--74965.
+
+\end{thebibliography}
+
+\end{document}
